@@ -1,0 +1,116 @@
+sensor:
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    name: "Brink Extension Software Rohwert 4500"
+    address: 4500
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    name: "Brink Extension Software Rohwert 4501"
+    address: 4501
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    name: "Brink Extension Software Build"
+    address: 4502
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    name: "Brink Extension Hardwareversion Rohwert"
+    address: 4503
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    name: "Brink Extension Gerätetyp"
+    address: 4504
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    name: "Brink Extension Dipswitch Wert"
+    address: 4505
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    name: "Brink Extension NTC Temperatur"
+    address: 4520
+    register_type: read
+    value_type: S_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    state_class: measurement
+    accuracy_decimals: 1
+    filters:
+      - multiply: 0.1
+      - filter_out: 999.9
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    name: "Brink Extension Kontakt 1"
+    address: 4521
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    name: "Brink Extension Kontakt 2"
+    address: 4522
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    name: "Brink Extension Relaisausgang 1"
+    address: 4541
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    name: "Brink Extension Relaisausgang 2"
+    address: 4542
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    name: "Brink Extension Analogeingang 1"
+    address: 4523
+    register_type: read
+    value_type: U_WORD
+    unit_of_measurement: "%"
+    state_class: measurement
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    name: "Brink Extension Analogeingang 2"
+    address: 4524
+    register_type: read
+    value_type: U_WORD
+    unit_of_measurement: "%"
+    state_class: measurement
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    name: "Brink Extension Analogausgang 1"
+    address: 4543
+    register_type: read
+    value_type: U_WORD
+    unit_of_measurement: "%"
+    state_class: measurement
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    name: "Brink Extension Analogausgang 2"
+    address: 4544
+    register_type: read
+    value_type: U_WORD
+    unit_of_measurement: "%"
+    state_class: measurement

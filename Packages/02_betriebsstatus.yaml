@@ -1,0 +1,109 @@
+sensor:
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    id: brink_active_function_code
+    name: "Brink Aktive Funktion Code"
+    address: 4020
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    id: brink_fan_control_type_code
+    name: "Brink Lüfterregelung Code"
+    address: 4021
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    id: brink_ventilation_mode_code
+    name: "Brink Lüftungsmodus Code"
+    address: 4022
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    id: brink_flow_switch_position_code
+    name: "Brink Schalterposition Code"
+    address: 4080
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    id: brink_signal_output_code
+    name: "Brink Signalausgang Code"
+    address: 4090
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    id: brink_ebus_power_status_code
+    name: "Brink eBus Stromstatus Code"
+    address: 4101
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    id: brink_time_raw
+    name: "Brink Gerätezeit Rohwert"
+    address: 4110
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    id: brink_date_raw_1
+    name: "Brink Gerätedatum Rohwert 1"
+    address: 4111
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    id: brink_date_raw_2
+    name: "Brink Gerätedatum Rohwert 2"
+    address: 4112
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    name: "Brink Betriebsstunden Gesamt"
+    address: 4113
+    register_type: read
+    value_type: U_DWORD
+    unit_of_measurement: "h"
+    state_class: total_increasing
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    name: "Brink Filter Betriebsstunden"
+    address: 4115
+    register_type: read
+    value_type: U_WORD
+    unit_of_measurement: "h"
+    state_class: total_increasing
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    name: "Brink Filter Luftmenge seit Reset"
+    address: 4116
+    register_type: read
+    value_type: U_DWORD
+    unit_of_measurement: "m³"
+    state_class: total_increasing
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    name: "Brink Gesamt Luftmenge seit Inbetriebnahme"
+    address: 4118
+    register_type: read
+    value_type: U_DWORD
+    unit_of_measurement: "m³"
+    state_class: total_increasing
+    entity_category: diagnostic

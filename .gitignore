@@ -1,0 +1,12 @@
+# ESPHome secrets and generated files
+secrets.yaml
+.esphome/
+.cache/
+build/
+
+# Editor and operating-system files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~

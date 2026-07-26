@@ -1,0 +1,82 @@
+sensor:
+  - platform: wifi_signal
+    name: "Brink ESP WLAN Signal"
+    update_interval: 60s
+    entity_category: diagnostic
+
+  - platform: uptime
+    name: "Brink ESP Laufzeit"
+    entity_category: diagnostic
+
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    id: brink_sw_type_major
+    name: "Brink Softwareversion Basis Rohwert 4000"
+    address: 4000
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    id: brink_sw_minor_fix
+    name: "Brink Softwareversion Basis Rohwert 4001"
+    address: 4001
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    id: brink_sw_build
+    name: "Brink Software Build Basis"
+    address: 4002
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    id: brink_hw_version_raw
+    name: "Brink Hardwareversion Basis Rohwert"
+    address: 4003
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    id: brink_appliance_type
+    name: "Brink Gerätetyp intern"
+    address: 4004
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    id: brink_dipswitch
+    name: "Brink Dipswitch Wert"
+    address: 4005
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    id: brink_serial_part1
+    internal: true
+    address: 4010
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    id: brink_serial_part2
+    internal: true
+    address: 4011
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    id: brink_serial_part3
+    internal: true
+    address: 4012
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic

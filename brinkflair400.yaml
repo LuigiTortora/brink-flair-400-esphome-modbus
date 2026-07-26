@@ -1,0 +1,1213 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Brink Flair 400 Standard UWA2-B
+
+# M5Stack AtomS3 Lite + Atomic RS485 Base
+
+#
+
+# Standalone version derived from fonske/Brink-flair-modbus.
+
+# No Modbus write is executed at boot or connection time.
+
+# Operating-mode writes occur only after an explicit user selection.
+
+
+
+substitutions:
+  name: brinkflair400
+  friendly_name: "Brink Flair 400"
+  device_description: "Brink Flair 400 Standard UWA2-B via Modbus RTU"
+  timezone: "Europe/Berlin"
+  modbusaddress: "20"
+  brink_filter_status: Filter Status
+  brink_bypass_status: Bypass Status
+  brink_co2_status1: CO2 Sensor1 Status
+  brink_co2_status2: CO2 Sensor2 Status
+  brink_co2_status3: CO2 Sensor3 Status
+  brink_co2_status4: CO2 Sensor4 Status
+  brink_temp_to_inside: Zuluft Temperatur
+  brink_humidity_to_inside: Zuluft Luftfeuchtigkeit
+  brink_dewpoint_to_inside: Zuluft Taupunkt
+  brink_external_humidity_sensor: Luftfeuchtigkeitssensor (extern)
+  brink_external_co2_sensor1: CO2 Sensor1
+  brink_external_co2_sensor2: CO2 Sensor2
+  brink_external_co2_sensor3: CO2 Sensor3
+  brink_external_co2_sensor4: CO2 Sensor4
+  brink_temp_to_outside: Fortluft Temperatur
+  brink_humidity_to_outside: Fortluft Luftfeuchtigkeit
+  brink_temp_from_outside: Außenluft Temperatur
+  brink_dewpoint_to_outside: Fortluft Taupunkt
+  brink_supply_pressure: Zuluft Druck
+  brink_exhaust_pressure: Abluft Druck
+  brink_setpoint_inlet_volume: Eingestelltes Zuluft Volumen
+  brink_current_inlet_volume: Aktuelles Zuluft Volumen
+  brink_speed_supply_fan: Geschwindigkeit Zuluftventilator
+  brink_speed_exhaust_fan: Geschwindigkeit Abluftventilator
+  brink_setpoint_outlet_volume: Eingestelltes Abluft Volumen
+  brink_current_outlet_volume: Aktuelles Abluft Volumen
+  brink_frost_heater_power: Frost Vorheizer Power
+  brink_frost_fan_reduction: Frost Lüfter-Reduktion
+  brink_current_filter_hours: Aktuelle Filterstunden
+  brink_current_filter_days: Aktuelle Filtertage
+  brink_exchange_filter_in: Filter austauschen in
+  brink_filter_m3_h: Filternutzung (m³)
+  brink_device_type: Gerätetyp
+  brink_frost_status: Frost Status
+  brink_bypass_boost_switch_position: Bypass Boost Stufe
+  brink_modbus_flow_step: Modbus Lüfterstufe
+  brink_modbus_flow_rate: Modbus Lüftergeschwindigkeit
+  brink_status: Status
+  brink_rht_sensor: RHT Sensor aktiv
+  brink_co2_sensor: CO2 Sensor aktiv
+  brink_standby_switch: Standby Schalter
+  brink_imbalance_intake: Ungleichgewicht Zuluft
+  brink_bypass_from_dwelling: Bypass Wunschtemperatur
+  brink_bypass_from_outside: Bypass Außentemperatur
+  brink_bypass_hysteresis: Bypass Hysterese
+  brink_frost_control_temperature: Frostschutztemperatur
+  brink_frost_minimum_inlet_temperature: Mindest-Einblastemperatur # German is silly
+  brink_imbalance_exhaust: Ungleichgewicht Abluft
+  brink_filter_change_days: Tage vor Filterwarnung
+  brink_filter_reset_on: Filter Reset angeschaltet
+  brink_co2_from_inside: CO2 Abluft
+  brink_humidity_from_inside: Abluft Luftfeuchtigkeit
+  brink_temp_from_inside: Abluft Temperatur
+  brink_pressure_from_inside: Abluft Druck
+  brink_performance: Performance
+  brink_relay: Relay
+  brink_heater_mode: Heizung Modus
+  brink_heater_setpoint: Heizung Solltemperatur
+  heater_none: Nicht verfügbar
+  heater_pre: Vorheizer
+  heater_post: Nachheizer
+  auto: Auto
+  initialize: Initialisieren...
+  unknown: Unbekannt
+  opening: Öffnet...
+  closing: Schließt...
+  open: Geöffnet
+  closed: Geschlossen
+  error: Error
+  hours: Stunden
+  days: Tage
+  not_dirty: Nicht Dreckig
+  dirty: Dreckig
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+
+# Enable Home Assistant API
+
+esp32:
+  board: esp32-s3-devkitc-1
+  flash_size: 8MB
+## Atom S3 lite  
+  framework:
+    type: esp-idf
+    version: recommended
+    # Custom sdkconfig options
+    sdkconfig_options:
+      CONFIG_COMPILER_OPTIMIZATION_SIZE: y
+      CONFIG_BT_ENABLED: n
+
+#esp32:
+#  board: esp32-s3-devkitc-1
+#  framework:
+#    type: arduino
+#  variant: esp32s3
+#  flash_size: 8MB
+
+# uart for modbus
+
+logger:
+  level: DEBUG
+
+api:
+  encryption:
+    key: !secret brink_api_key
+
+ota:
+  - platform: esphome
+    password: !secret brink_ota_password
+  
+# dashboard_import:
+#   package_import_url: https://github.com/fonske/Brink-flair-modbus
+
+# Sync time
+
+wifi:
+  reboot_timeout: 0s
+  fast_connect: true
+  power_save_mode: high
+  ap:
+    ssid: "${friendly_name}"
+    password: !secret brink_fallback_ap_password
+    ap_timeout: 15s
+
+#esp32_improv:
+#  authorizer: None
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+captive_portal:
+  id: id_captive_portal
+
+# Enable Web server.
+
+web_server:
+  port: 80
+  version: 3
+  local: true
+  auth:
+    type: digest
+    username: !secret brink_web_username
+    password: !secret brink_web_password
+
+###############################################################################
+## STATUS LED
+###############################################################################
+## Simple status led for Atom s3 (lite)
+## G35=RGB WS2812C-2020
+
+uart:
+  id: mod_bus
+  baud_rate: 19200
+  stop_bits: 1
+  parity: even
+  tx_pin: GPIO6
+  rx_pin: GPIO5
+
+# i2c for extra sensor
+
+i2c:
+  - id: bus_a
+    sda: GPIO2
+    scl: GPIO1
+
+###  ESP restart button
+
+time:
+  - platform: sntp
+    id: brink_sntp_time
+    timezone: ${timezone}
+    on_time_sync:
+      then:
+        - logger.log: "Synchronized sntp clock"
+
+## Option for multiple DS18b20's on last 3 terminals -/S(ignal)/+ 
+## Comment with # if not used.
+### DS18b20's ###
+#dallas:
+#  - pin: 8
+#    update_interval: 30s
+
+###  Settings Brink Flair (no need to change normally)
+###  menu 14-Communication: TypeBus=Modbus, Slave Address=20, Baudrate=19200, Parity=Even
+
+modbus:
+  id: modbus_brink
+  send_wait_time: 250ms
+
+modbus_controller:
+  - id: ${name}
+    ## Brink Modbus slaveaddress 20
+    address: ${modbusaddress} 
+    command_throttle: 250ms
+    setup_priority: -10
+    update_interval: 30s
+
+globals:
+  - id: brink_command_pending
+    type: bool
+    restore_value: false
+    initial_value: "false"
+
+  - id: brink_expected_7990
+    type: int
+    restore_value: false
+    initial_value: "0"
+
+  - id: brink_expected_8000
+    type: int
+    restore_value: false
+    initial_value: "0"
+
+  - id: brink_expected_8001
+    type: int
+    restore_value: false
+    initial_value: "0"
+
+  - id: brink_expected_8003
+    type: int
+    restore_value: false
+    initial_value: "0"
+
+  - id: brink_command_started
+    type: uint32_t
+    restore_value: false
+    initial_value: "0"
+
+  - id: brink_command_target
+    type: std::string
+    restore_value: false
+    initial_value: '""'
+
+binary_sensor:
+  - platform: status
+    id: brink_esp_status
+    name: "Brink ESP Status"
+    entity_category: diagnostic
+
+sensor:
+
+## Option for multiple DS18b20 on last 3 terminals -/Signal/+ 
+## Comment with # if not used.
+## 2x ds18b20: 
+#  - platform: dallas
+#    address: 0x233c01f095e2ca28  ##find adress in esphome log
+#    name: Temperature 1
+#    id: temperature_1
+#    filters:
+#    - filter_out: NAN
+#    - offset: 0.3
+
+#  - platform: dallas
+#    address: 0x903c01f095ea8128  ##find adress in esphome log
+#    name: Temperature 2
+#    id: temperature_2
+#    filters:
+#   - filter_out: NAN
+#   - offset: 0.1
+
+#  - platform: dallas
+#    address: 0xcd3c01f095d5a128  ##find adress in esphome log
+#    name: Temperature 3
+#    id: temperature_3
+#    filters:
+#    - filter_out: NAN
+#    - offset: -0.1
+
+#  - platform: dallas
+#    address: 0x633c01f095619f28  ##find adress in esphome log
+#    name: Temperature 4
+#    id: temperature_4
+#    filters:
+#    - filter_out: NAN
+#    - offset: 0.0
+
+  - id: brink_temp_to_inside
+    name: ${brink_temp_to_inside}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    address: 4036
+    device_class: temperature
+    unit_of_measurement: "°C"
+    register_type: read
+    value_type: S_WORD
+    accuracy_decimals: 1
+    state_class: measurement
+    filters:
+      - multiply: 0.1
+
+  - id: brink_humidity_to_inside
+    name: ${brink_humidity_to_inside}
+    icon: "mdi:water-percent"
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    register_type: read
+    address: 4037
+    device_class: humidity
+    unit_of_measurement: "%"
+    value_type: U_WORD  
+    accuracy_decimals: 0
+    state_class: measurement
+
+  - id: brink_dewpoint_to_inside
+    name: ${brink_dewpoint_to_inside}
+    platform: template
+    lambda: |-
+        return (243.5*(log(id(brink_humidity_to_inside).state/100)+((17.67*id(brink_temp_to_inside).state)/
+        (243.5+id(brink_temp_to_inside).state)))/(17.67-log(id(brink_humidity_to_inside).state/100)-
+        ((17.67*id(brink_temp_to_inside).state)/(243.5+id(brink_temp_to_inside).state))));
+    unit_of_measurement: °C
+    update_interval: 15s
+    icon: 'mdi:thermometer-water'
+
+  - id: brink_temp_to_outside
+    name: ${brink_temp_to_outside}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    address: 4046
+    device_class: temperature
+    unit_of_measurement: "°C"
+    register_type: read
+    value_type: S_WORD
+    accuracy_decimals: 1
+    state_class: measurement
+    filters:
+      - multiply: 0.1
+
+  - id: brink_humidity_to_outside
+    name: ${brink_humidity_to_outside}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    icon: mdi:water-percent
+    register_type: read
+    address: 4047
+    device_class: humidity
+    unit_of_measurement: "%"
+    value_type: U_WORD
+    accuracy_decimals: 0
+    state_class: measurement
+
+  - id: brink_dewpoint_to_outside
+    name: ${brink_dewpoint_to_outside}
+    platform: template
+    lambda: |-
+        return (243.5*(log(id(brink_humidity_to_outside).state/100)+((17.67*id(brink_temp_to_outside).state)/
+        (243.5+id(brink_temp_to_outside).state)))/(17.67-log(id(brink_humidity_to_outside).state/100)-
+        ((17.67*id(brink_temp_to_outside).state)/(243.5+id(brink_temp_to_outside).state))));
+    unit_of_measurement: °C
+    update_interval: 15s
+    icon: 'mdi:thermometer-water'
+
+  - id: brink_temp_from_outside  # NTC1
+    name: ${brink_temp_from_outside}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    address: 4081
+    device_class: temperature
+    unit_of_measurement: "°C"
+    register_type: read
+    value_type: S_WORD
+    accuracy_decimals: 1
+    state_class: measurement
+    filters:
+      - multiply: 0.1
+
+  - id: brink_supply_pressure
+    name: ${brink_supply_pressure}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    icon: mdi:gauge
+    register_type: read
+    address: 4023
+    device_class: atmospheric_pressure
+    unit_of_measurement: "Pa"
+    value_type: S_WORD  
+    accuracy_decimals: 0
+    state_class: measurement
+    filters:
+      - multiply: 1.0
+    
+  - id: brink_exhaust_pressure
+    name: ${brink_exhaust_pressure}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    icon: mdi:gauge
+    register_type: read
+    address: 4024
+    device_class: atmospheric_pressure
+    unit_of_measurement: "Pa"
+    value_type: S_WORD  
+    accuracy_decimals: 0
+    state_class: measurement
+    filters:
+      - multiply: 1.0
+
+  - id: brink_setpoint_inlet_volume
+    name: ${brink_setpoint_inlet_volume}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    icon: mdi:fan
+    address: 4031
+    unit_of_measurement: "m3/h"
+    register_type: read
+    value_type: U_WORD
+    accuracy_decimals: 0
+    state_class: measurement
+    filters:
+      - multiply: 1.0
+
+  - id: brink_current_inlet_volume
+    name: ${brink_current_inlet_volume}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    icon: mdi:fan
+    address: 4032
+    unit_of_measurement: "m3/h"
+    register_type: read
+    value_type: U_WORD
+    accuracy_decimals: 0
+    state_class: measurement
+    filters:
+      - multiply: 1.0
+
+  - platform: modbus_controller
+    modbus_controller_id: ${name}
+    id: brink_rpm_supply_fan
+    name: ${brink_speed_supply_fan}
+    register_type: read
+    address: 4034
+    unit_of_measurement: "RPM"
+    value_type: U_WORD  
+    accuracy_decimals: 0
+  
+  - platform: modbus_controller
+    modbus_controller_id: ${name}
+    id: brink_rpm_supply_fan_exhaust_fan
+    name: ${brink_speed_exhaust_fan}
+    register_type: read
+    address: 4044
+    unit_of_measurement: "RPM"
+    value_type: U_WORD  
+    accuracy_decimals: 0
+
+  - id: brink_setpoint_outlet_volume
+    name: ${brink_setpoint_outlet_volume}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    icon: mdi:fan
+    address: 4041
+    unit_of_measurement: "m3/h"
+    register_type: read
+    value_type: U_WORD
+    accuracy_decimals: 0
+    state_class: measurement
+    filters:
+      - multiply: 1.0
+
+  - id: brink_current_outlet_volume
+    name: ${brink_current_outlet_volume}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    icon: mdi:fan
+    address: 4042
+    unit_of_measurement: "m3/h"
+    register_type: read
+    value_type: U_WORD
+    accuracy_decimals: 0
+    state_class: measurement
+    filters:
+      - multiply: 1.0
+
+  - id: brink_frost_heater_power
+    name: ${brink_frost_heater_power}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    icon: mdi:penguin
+    address: 4071
+    unit_of_measurement: "%"
+    register_type: read
+    value_type: U_WORD
+    accuracy_decimals: 1
+    state_class: measurement
+    filters:
+      - multiply: 1.0
+
+  - id: brink_frost_fan_reduction
+    name: ${brink_frost_fan_reduction}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    icon: mdi:penguin
+    address: 4072
+    unit_of_measurement: "%"
+    register_type: read
+    value_type: U_WORD
+    accuracy_decimals: 1
+    state_class: measurement
+    filters:
+      - multiply: 1.0
+
+  - id: brink_current_filter_hours
+    name: ${brink_current_filter_hours}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    icon: mdi:clock-start
+    address: 4115
+    unit_of_measurement: ${hours}
+    register_type: read
+    value_type: U_WORD
+    accuracy_decimals: 0
+
+  - id: brink_current_filter_days
+    name: ${brink_current_filter_days}
+    platform: template
+    icon: mdi:clock-start
+    unit_of_measurement: ${days}
+    accuracy_decimals: 0
+    update_interval: 60s
+    lambda: |-
+      if (isnan(id(brink_current_filter_hours).state)) {
+        return NAN;
+      }
+      return id(brink_current_filter_hours).state / 24.0f;
+    on_value:
+      then:
+        - sensor.template.publish:
+            id: brink_exchange_filter_in
+            state: !lambda |-
+              return id(brink_filter_change_days).state - id(brink_current_filter_days).state;
+
+  - id: brink_exchange_filter_in
+    name: ${brink_exchange_filter_in}
+    platform: template
+    unit_of_measurement: ${days}
+    accuracy_decimals: 0
+
+  - id: brink_filter_m3_h
+    name: ${brink_filter_m3_h}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    icon: mdi:clock-start
+    address: 4116
+    unit_of_measurement: "m3/h"
+    register_type: read
+    value_type: U_DWORD
+    accuracy_decimals: 0
+    state_class: total
+
+  - id: brink_device_type
+    name: ${brink_device_type}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    icon: mdi:penguin
+    address: 4004
+    unit_of_measurement: ""
+    register_type: read
+    value_type: U_WORD
+  - platform: wifi_signal
+    id: brink_wifi_signal
+    name: "Brink WLAN Signal"
+    update_interval: 60s
+    entity_category: diagnostic
+
+  - platform: uptime
+    id: brink_esp_uptime
+    name: "Brink ESP Laufzeit"
+    update_interval: 60s
+    entity_category: diagnostic
+
+  - platform: modbus_controller
+    modbus_controller_id: ${name}
+    id: brink_readback_7990
+    name: "Brink Readback 7990 Modbus Interface"
+    address: 7990
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 0
+    entity_category: diagnostic
+
+  - platform: modbus_controller
+    modbus_controller_id: ${name}
+    id: brink_readback_8000
+    name: "Brink Readback 8000 Modbus Control"
+    address: 8000
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 0
+    entity_category: diagnostic
+
+  - platform: modbus_controller
+    modbus_controller_id: ${name}
+    id: brink_readback_8001
+    name: "Brink Readback 8001 Stufe"
+    address: 8001
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 0
+    entity_category: diagnostic
+
+  - platform: modbus_controller
+    modbus_controller_id: ${name}
+    id: brink_readback_8003
+    name: "Brink Readback 8003 Standby"
+    address: 8003
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 0
+    entity_category: diagnostic
+
+text_sensor:
+  - id: brink_filter_reset_on
+    name: ${brink_filter_reset_on}
+    platform: template
+    icon: mdi:clock-start
+    update_interval: 600s
+  - id: brink_status
+    name: ${brink_status}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    register_type: read
+    address: 4020
+    raw_encode: NONE
+    icon: mdi:home-heart
+    skip_updates: 20
+    lambda: |-
+      uint16_t int_mode = (data[item->offset] << 8) + data[item->offset+1];
+      ESP_LOGD("main","Parsed operation mode int : %d", int_mode);
+      std::string mode_str;
+      switch (int_mode) {
+        case 0:  mode_str = "Standby"; break;
+        case 1:  mode_str = "Bootloader"; break;        
+        case 2:  mode_str = "Non Blocking Error"; break;
+        case 3:  mode_str = "Blocking Error"; break;
+        case 4:  mode_str = "Manual"; break;
+        case 5:  mode_str = "Holiday"; break;
+        case 6:  mode_str = "Night ventilation"; break;
+        case 7:  mode_str = "Party"; break;
+        case 8:  mode_str = "Bypass Boost"; break; 
+        case 9:  mode_str = "Normal Boost"; break; 
+        case 10:  mode_str = "Auto CO2"; break; 
+        case 11:  mode_str = "Auto eBus"; break; 
+        case 12:  mode_str = "Auto Modbus"; break; 
+        case 13:  mode_str = "Auto Lan/ Wlan portal"; break; 
+        case 14:  mode_str = "Auto Lan/ Wlan local"; break;                                                         
+      }
+      return mode_str;
+  
+  - id: brink_bypass_status
+    name: ${brink_bypass_status}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    register_type: read
+    address: 4050
+    raw_encode: NONE
+    icon: mdi:valve
+    skip_updates: 20
+    lambda: |-
+      uint16_t int_mode = (data[item->offset] << 8) + data[item->offset+1];
+      std::string mode_str;
+      switch (int_mode) {
+        case 0:  mode_str = "${initialize}"; break;
+        case 1:  mode_str = "${opening}"; break;
+        case 2:  mode_str = "${closing}"; break;
+        case 3:  mode_str = "${open}"; break;
+        case 4:  mode_str = "${closed}"; break;
+        case 255:  mode_str = "${error}"; break;
+        default: mode_str = "${unknown}"; break;
+       }
+      return mode_str;
+
+  - id: brink_frost_status
+    name: ${brink_frost_status}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    register_type: read
+    address: 4070
+    raw_encode: NONE
+    icon: mdi:penguin
+    skip_updates: 20
+    lambda: |-
+      uint16_t int_mode = (data[item->offset] << 8) + data[item->offset+1];
+      ESP_LOGD("main","Parsed operation mode int : %d", int_mode);
+      std::string mode_str;
+      switch (int_mode) {
+        case 0:  mode_str = "Initialize"; break;
+        case 1:  mode_str = "PowerUp Delay"; break;
+        case 2:  mode_str = "No Frost"; break;
+        case 3:  mode_str = "NoFrost Delay"; break;
+        case 4:  mode_str = "FrostControl Start Delay"; break;
+        case 5:  mode_str = "Wait For Icing"; break;
+        case 6:  mode_str = "Ice Detected Delay"; break;
+        case 7:  mode_str = "Heating"; break;
+        case 8:  mode_str = "Wait for Free Heater"; break;
+        case 9:  mode_str = "FanControl Start Delay"; break;
+        case 10:  mode_str = "FanControl Wait Delay"; break;
+        case 11:  mode_str = "FanControl"; break;
+        case 12:  mode_str = "Fan Off Delay"; break;
+        case 13:  mode_str = "Fan Off"; break;
+        case 14:  mode_str = "Fan Restarting"; break;
+        case 15:  mode_str = "Error"; break;
+        case 16:  mode_str = "Test modus"; break;
+        default: mode_str = "${unknown}"; break;
+       }
+      return mode_str;
+
+  - id: brink_filter_status
+    name: ${brink_filter_status}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    register_type: read
+    address: 4100
+    raw_encode: NONE
+    icon: mdi:air-filter
+    skip_updates: 20
+    lambda: |-
+      uint16_t int_mode = (data[item->offset] << 8) + data[item->offset+1];
+      ESP_LOGD("main","Parsed operation mode int : %d", int_mode);
+      std::string mode_str;
+      switch (int_mode) {
+        case 0:  mode_str = "${not_dirty}"; break;
+        case 1:  mode_str = "${dirty}";
+      }
+      return mode_str;
+  - platform: template
+    id: brink_letzte_aktion
+    name: "Brink Letzte Aktion"
+    icon: mdi:message-check-outline
+    update_interval: never
+
+number:
+  - id: brink_flow_0
+    name: Flow 0
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    register_type: holding
+    address: 6000
+    unit_of_measurement: "m3/h"
+    value_type: S_WORD      
+    min_value: 0
+    max_value: 400
+    mode: slider
+    icon: mdi:fan-auto
+
+  - id: brink_flow_1
+    name: Flow 1
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    register_type: holding
+    address: 6001
+    unit_of_measurement: "m3/h"
+    value_type: S_WORD      
+    min_value: 50
+    max_value: 400
+    mode: slider
+    icon: mdi:fan-speed-1
+
+  - id: brink_flow_2
+    name: Flow 2
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    register_type: holding
+    address: 6002
+    unit_of_measurement: "m3/h"
+    value_type: S_WORD      
+    min_value: 50
+    max_value: 400
+    mode: slider
+    icon: mdi:fan-speed-2
+
+  - id: brink_flow_3
+    name: Flow 3
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    register_type: holding
+    address: 6003
+    unit_of_measurement: "m3/h"
+    value_type: S_WORD   
+    min_value: 50
+    max_value: 400
+    mode: slider
+    icon: mdi:fan-speed-3
+  # If the bypass boost function is activated, the bypass opens and the fan will run at this preset setting.
+  - id: brink_bypass_boost_switch_position
+    name: ${brink_bypass_boost_switch_position}
+    platform: modbus_controller
+    modbus_controller_id: ${name}  
+    address: 6105
+    value_type: S_WORD      
+    min_value: 0
+    max_value: 3
+    mode: slider
+    icon: mdi:fan
+
+  - id: brink_imbalance_intake
+    name: ${brink_imbalance_intake}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    address: 6035
+    unit_of_measurement: "%"
+    value_type: S_WORD   
+    multiply: 10    
+    min_value: -15
+    max_value: 15
+    mode: slider
+    icon: mdi:home-import-outline
+
+##  BYPASS OPEN
+##  ▪ De buitentemperatuur is hoger dan 10°C (instelbaar tussen 7°C en 15°C) EN
+##  ▪ de buitentemperatuur is lager dan de binnentemperatuur uit de woning EN
+##  ▪ de binnentemperatuur uit woning is hoger dan 24°C ( instelbaar tussen 15°C en 35°C )
+
+##  BYPASS DICHT
+##  ▪ De buitentemperatuur is lager dan 10° (instelbaar tussen 7°C en 15°C) C OF
+##  ▪ de buitentemperatuur is hoger dan de binnentemperatuur uit de woning OF
+##  ▪ de temperatuur uit de woning is lager dan de ingestelde temperatuur
+##    minus de ingestelde temperatuur bij de hysterese
+
+  - id: brink_bypass_from_dwelling ## van binnen naar buitenuitblaas, default 24 °C
+    name: ${brink_bypass_from_dwelling}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    address: 6101
+    device_class: temperature
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    min_value: 15
+    max_value: 35
+    step: 0.5
+    multiply: 10
+    mode: slider
+    icon: mdi:home-export-outline
+
+  - id: brink_bypass_from_outside ## van buiten naar binnen aanzuig, default 10 °C
+    name: ${brink_bypass_from_outside}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    address: 6102
+    device_class: temperature
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    min_value: 7
+    max_value: 15
+    step: 0.5
+    multiply: 10
+    mode: slider
+    icon: mdi:home-import-outline
+
+  - id: brink_bypass_hysteresis ## default 2 °C
+    name: ${brink_bypass_hysteresis}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    address: 6103
+    unit_of_measurement: "°C"
+    device_class: temperature
+    value_type: S_WORD
+    min_value: 0
+    max_value: 5
+    step: 0.5
+    multiply: 10
+    mode: slider
+    icon: mdi:home-edit-outline
+
+### Vorstbeveiliging
+  - id: brink_frost_control_temperature ## default 0 °C
+    name: ${brink_frost_control_temperature}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    address: 6110
+    unit_of_measurement: "°C"
+    device_class: temperature
+    value_type: S_WORD      
+    min_value: -1.5
+    max_value: 1.5
+    step: 0.5
+    multiply: 10
+    mode: slider
+    icon: mdi:home-export-outline
+
+  - id: brink_frost_minimum_inlet_temperature  ## default 10 °C
+    name: ${brink_frost_minimum_inlet_temperature}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    address: 6111
+    device_class: temperature
+    unit_of_measurement: "°C"
+    value_type: S_WORD      
+    min_value: 7
+    max_value: 17
+    step: 0.5
+    multiply: 10
+    mode: slider
+    icon: mdi:home-export-outline
+
+  - id: brink_imbalance_exhaust  ## default 0
+    name: ${brink_imbalance_exhaust}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    address: 6036
+    unit_of_measurement: "%"
+    value_type: S_WORD      
+    multiply: 10 
+    min_value: -15
+    max_value: 15
+    mode: slider
+    icon: mdi:home-export-outline
+
+  - id: brink_filter_change_days
+    name:  ${brink_filter_change_days}
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    register_type: holding
+    address: 6120
+    unit_of_measurement: ""
+    value_type: S_WORD      
+    min_value: 0
+    max_value: 365
+    mode: slider
+    icon: mdi:timer-sync-outline
+
+select:
+  - id: brink_bypass_mode
+    name: Bypass Mode
+    platform: modbus_controller
+    modbus_controller_id: ${name}  
+    address: 6100
+    value_type: S_WORD
+    skip_updates: 10
+    optionsmap:
+      ${auto}: 0
+      ${closed}: 1
+      ${open}: 2
+  - platform: template
+    id: brink_betriebsmodus
+    name: "Brink Betriebsmodus"
+    icon: mdi:fan-auto
+    options:
+      - "Automatik"
+      - "Urlaub"
+      - "Niedrig"
+      - "Normal"
+      - "Hoch"
+    update_interval: 2s
+    lambda: |-
+      if (isnan(id(brink_readback_7990).state) ||
+          isnan(id(brink_readback_8000).state) ||
+          isnan(id(brink_readback_8001).state) ||
+          isnan(id(brink_readback_8003).state)) {
+        return {};
+      }
+
+      const int interface_mode = static_cast<int>(id(brink_readback_7990).state);
+      const int control_mode = static_cast<int>(id(brink_readback_8000).state);
+      const int preset = static_cast<int>(id(brink_readback_8001).state);
+      const int standby = static_cast<int>(id(brink_readback_8003).state);
+
+      if (interface_mode == 1 && control_mode == 0 &&
+          preset == 1 && standby == 0) {
+        return std::string("Automatik");
+      }
+
+      if (interface_mode == 2 && control_mode == 1 && standby == 0) {
+        switch (preset) {
+          case 0: return std::string("Urlaub");
+          case 1: return std::string("Niedrig");
+          case 2: return std::string("Normal");
+          case 3: return std::string("Hoch");
+          default: break;
+        }
+      }
+
+      // Do not invent a state when the four registers form an unknown
+      // combination. The last valid UI state remains visible until the
+      // readbacks become consistent.
+      return {};
+    set_action:
+      - lambda: |-
+          int preset = 0;
+          const bool automatic = (x == "Automatik");
+
+          if (x == "Urlaub") {
+            preset = 0;
+          } else if (x == "Niedrig") {
+            preset = 1;
+          } else if (x == "Normal") {
+            preset = 2;
+          } else if (x == "Hoch") {
+            preset = 3;
+          }
+
+          auto *controller = id(${name});
+          auto write_register = [controller](uint16_t address, uint16_t value) {
+            ESP_LOGI("brink.control", "FC06: Register %u = %u", address, value);
+            auto command =
+                esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
+                    controller, address, value);
+            controller->queue_command(command);
+          };
+
+          id(brink_command_target) = x;
+          id(brink_command_started) = millis();
+          id(brink_command_pending) = true;
+          id(brink_letzte_aktion).publish_state("Sende: " + x);
+          ESP_LOGI("brink.control", "Bewusste Auswahl: %s", x.c_str());
+
+          if (automatic) {
+            // Tested automatic/time-program sequence, exact order:
+            // 7990=1, 8001=1, 8003=0, 8000=0
+            id(brink_expected_7990) = 1;
+            id(brink_expected_8001) = 1;
+            id(brink_expected_8003) = 0;
+            id(brink_expected_8000) = 0;
+
+            write_register(7990, 1);
+            write_register(8001, 1);
+            write_register(8003, 0);
+            write_register(8000, 0);
+          } else {
+            // Tested manual sequence, exact order:
+            // 7990=2, 8000=1, 8001=preset, 8003=0
+            id(brink_expected_7990) = 2;
+            id(brink_expected_8000) = 1;
+            id(brink_expected_8001) = preset;
+            id(brink_expected_8003) = 0;
+
+            write_register(7990, 2);
+            write_register(8000, 1);
+            write_register(8001, preset);
+            write_register(8003, 0);
+          }
+
+switch:
+  - id: brink_bypass_boost
+    name: Bypass Boost
+    platform: modbus_controller
+    modbus_controller_id: ${name}
+    register_type: holding
+    address: 6104
+    bitmask: 1
+    entity_category: config
+    icon: mdi:toggle-switch
+
+button:
+  - id: brink_reset_filter_button
+    name: Filter reset
+    platform: template
+    disabled_by_default: true
+    on_press:
+      then:
+        - lambda: |-
+            auto command =
+                esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
+                    id(${name}), 8010, 1);
+            id(${name})->queue_command(command);
+        - delay: 2s
+        - lambda: |-
+            auto command =
+                esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
+                    id(${name}), 8010, 0);
+            id(${name})->queue_command(command);
+        - text_sensor.template.publish:
+            id: brink_filter_reset_on
+            state: !lambda |-
+              char str[22];
+              time_t currTime = id(brink_sntp_time).now().timestamp;
+              strftime(str, sizeof(str), "%a %d %b %H:%M", localtime(&currTime));
+              return  { str };
+  - platform: restart
+    id: restart_button
+    name: Restart
+    
+# Enable/Disable logging
+
+light:
+  - platform: esp32_rmt_led_strip
+    id: status_led
+    name: Status led
+    icon: mdi:lightbulb
+    internal: true # Hides from Home Assistant
+    rgb_order: GRB
+    pin: 35
+    num_leds: 4
+    chipset: ws2812
+#    rmt_channel: 0 #only on platform: arduino
+    restore_mode: ALWAYS_OFF
+    entity_category: diagnostic
+    effects:
+      - pulse:
+          name: slow_pulse
+          transition_length: 250ms
+          update_interval: 500ms
+          min_brightness: 10%
+          max_brightness: 50%
+      - pulse:
+          name: fast_pulse
+          transition_length: 100ms
+          update_interval: 100ms
+          min_brightness: 25%
+          max_brightness: 100%
+
+# 🟢 Green on => wifi connected- api connected/ Green blinking => wifi connected - api disconnected
+# 🟣 Purple => wifi disconnected
+# 🔵 Blue => AP mode
+
+interval:
+  - interval: 10s
+    then:
+      if:
+        condition:
+          wifi.connected:
+        then:
+          if:
+            condition:
+              api.connected:
+            then:
+              - light.turn_on:
+                  id: status_led
+                  brightness: 50%
+                  red: 0
+                  green: 100%
+                  blue: 0
+                  effect: None
+            else:
+              - light.turn_on:
+                  id: status_led
+                  brightness: 50%
+                  red: 0
+                  green: 100%
+                  blue: 0
+                  effect: slow_pulse              
+        else:
+          if:
+            condition:
+              - lambda: 'return id(id_captive_portal).is_active();'
+            then:
+              - light.turn_on:
+                  id: status_led
+                  brightness: 100%
+                  red: 0
+                  green: 0
+                  blue: 100%
+            else:
+              - light.turn_on:
+                  id: status_led
+                  brightness: 100%
+                  red: 100%
+                  green: 0
+                  blue: 0
+  - interval: 1s
+    then:
+      - lambda: |-
+          if (!id(brink_command_pending)) {
+            return;
+          }
+
+          const bool readbacks_available =
+              !isnan(id(brink_readback_7990).state) &&
+              !isnan(id(brink_readback_8000).state) &&
+              !isnan(id(brink_readback_8001).state) &&
+              !isnan(id(brink_readback_8003).state);
+
+          if (readbacks_available) {
+            const bool matches =
+                static_cast<int>(id(brink_readback_7990).state) == id(brink_expected_7990) &&
+                static_cast<int>(id(brink_readback_8000).state) == id(brink_expected_8000) &&
+                static_cast<int>(id(brink_readback_8001).state) == id(brink_expected_8001) &&
+                static_cast<int>(id(brink_readback_8003).state) == id(brink_expected_8003);
+
+            if (matches) {
+              const std::string message = "Erfolgreich: " + id(brink_command_target);
+              id(brink_letzte_aktion).publish_state(message);
+              ESP_LOGI("brink.control", "%s", message.c_str());
+              id(brink_command_pending) = false;
+              return;
+            }
+          }
+
+          if (millis() - id(brink_command_started) > 75000) {
+            char message[180];
+            snprintf(
+                message, sizeof(message),
+                "Keine Bestätigung: %s (7990=%.0f, 8000=%.0f, 8001=%.0f, 8003=%.0f)",
+                id(brink_command_target).c_str(),
+                id(brink_readback_7990).state,
+                id(brink_readback_8000).state,
+                id(brink_readback_8001).state,
+                id(brink_readback_8003).state);
+            id(brink_letzte_aktion).publish_state(message);
+            ESP_LOGW("brink.control", "%s", message);
+            id(brink_command_pending) = false;
+          }

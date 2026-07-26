@@ -1,0 +1,69 @@
+sensor:
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    id: brink_co2_sensor_1_status_code
+    name: "Brink CO₂ Sensor 1 Status Code"
+    address: 4200
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    name: "Brink CO₂ Sensor 1 Wert"
+    address: 4201
+    register_type: read
+    value_type: U_WORD
+    unit_of_measurement: "ppm"
+    device_class: carbon_dioxide
+    state_class: measurement
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    id: brink_co2_sensor_2_status_code
+    name: "Brink CO₂ Sensor 2 Status Code"
+    address: 4202
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    name: "Brink CO₂ Sensor 2 Wert"
+    address: 4203
+    register_type: read
+    value_type: U_WORD
+    unit_of_measurement: "ppm"
+    device_class: carbon_dioxide
+    state_class: measurement
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    id: brink_co2_sensor_3_status_code
+    name: "Brink CO₂ Sensor 3 Status Code"
+    address: 4204
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    name: "Brink CO₂ Sensor 3 Wert"
+    address: 4205
+    register_type: read
+    value_type: U_WORD
+    unit_of_measurement: "ppm"
+    device_class: carbon_dioxide
+    state_class: measurement
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    id: brink_co2_sensor_4_status_code
+    name: "Brink CO₂ Sensor 4 Status Code"
+    address: 4206
+    register_type: read
+    value_type: U_WORD
+    entity_category: diagnostic
+  - platform: modbus_controller
+    modbus_controller_id: brink
+    name: "Brink CO₂ Sensor 4 Wert"
+    address: 4207
+    register_type: read
+    value_type: U_WORD
+    unit_of_measurement: "ppm"
+    device_class: carbon_dioxide
+    state_class: measurement
