@@ -57,14 +57,6 @@ Die API, OTA-Schnittstelle, der Fallback-Hotspot und der Webserver verwenden
 Werte aus `secrets.yaml`. Das ESPHome-Gerät und Home Assistant sollten nicht
 ungeschützt aus dem Internet erreichbar sein.
 
-## Packages
-
-Der Ordner `Packages/` enthält ein zusätzlich exportiertes, überwiegend
-lesendes Register-Set. Diese Dateien werden von `brinkflair400.yaml` aktuell
-nicht eingebunden. Sie sind zur Referenz enthalten und dürfen nicht ohne
-Abgleich parallel zu den bereits in der Hauptdatei definierten Sensoren
-aktiviert werden.
-
 ## Herkunft und Lizenz
 
 Die Standalone-Konfiguration wurde aus
