@@ -1,71 +1,69 @@
 # Brink Flair 400 ESPHome Modbus
 
-ESPHome-Konfiguration zur lokalen Einbindung einer Brink Flair 400
-Lüftungsanlage in Home Assistant über Modbus RTU.
+ESPHome configuration for locally integrating a Brink Flair 400 ventilation
+unit with Home Assistant via Modbus RTU.
 
-## Zielhardware
+## Target hardware
 
 - Brink Flair 400 Standard UWA2-B
 - M5Stack AtomS3 Lite
 - M5Stack Atomic RS485 Base
-- Modbus RTU: Adresse 20, 19.200 Baud, gerade Parität, 1 Stopbit
+- Modbus RTU: address 20, 19,200 baud, even parity, 1 stop bit
 
-Andere Flair-Modelle oder Hardwarevarianten können abweichende Register,
-Adressen und GPIOs verwenden. Vor dem Flashen müssen diese Angaben mit der
-eigenen Anlage abgeglichen werden.
+Other Flair models or hardware variants may use different registers,
+addresses, or GPIO assignments. Verify these settings against your own unit
+before flashing the ESP32.
 
-## Funktionen
+## Features
 
-- Temperaturen, Feuchte, Luftmengen, Drücke und Ventilatordrehzahlen
-- Bypass-, Frostschutz- und Filterstatus
-- Wahl des Betriebsmodus und der Lüfterstufe
-- Filter-Reset, Bypass-Boost und weitere Einstellwerte
-- Rücklesekontrolle für Modbus-Schreibbefehle
-- Home-Assistant-API, lokaler Webserver und OTA-Updates
+- Temperature, humidity, airflow, pressure, and fan-speed readings
+- Bypass, frost-protection, and filter status
+- Operating-mode and fan-stage selection
+- Filter reset, bypass boost, and additional configurable values
+- Read-back verification for Modbus write commands
+- Home Assistant API, local web server, and OTA updates
 
-Beim Start und beim Verbindungsaufbau werden keine Modbus-Schreibbefehle
-ausgeführt. Schreibbefehle werden erst durch eine ausdrückliche Bedienaktion
-ausgelöst.
+No Modbus write command is sent during startup or when a connection is
+established. Write commands are issued only after an explicit user action.
 
 ## Installation
 
-1. `brinkflair400.yaml` in das ESPHome-Verzeichnis kopieren.
-2. `secrets.example.yaml` als `secrets.yaml` kopieren.
-3. Alle Beispielwerte in `secrets.yaml` durch eigene Zugangsdaten und zufällige
-   Schlüssel ersetzen.
-4. Die GPIO-Belegung, Modbus-Adresse und Geräteeinstellungen prüfen.
-5. Die Konfiguration in ESPHome validieren und anschließend auf den ESP32
-   installieren.
-6. Das automatisch erkannte ESPHome-Gerät in Home Assistant hinzufügen.
+1. Copy `brinkflair400.yaml` into your ESPHome configuration directory.
+2. Copy `secrets.example.yaml` to `secrets.yaml`.
+3. Replace every example value in `secrets.yaml` with your own credentials and
+   randomly generated keys.
+4. Verify the GPIO assignments, Modbus address, and appliance settings.
+5. Validate the configuration in ESPHome and install it on the ESP32.
+6. Add the automatically discovered ESPHome device to Home Assistant.
 
-Beispiel für eine lokale Validierung:
+Example for local validation:
 
 ```shell
 esphome config brinkflair400.yaml
 ```
 
-`secrets.yaml` ist durch `.gitignore` von Git ausgeschlossen.
+`secrets.yaml` is excluded from Git by `.gitignore`.
 
-## Sicherheit
+## Safety and security
 
-Die Lüftungsanlage vor Arbeiten an Anschlussklemmen vollständig spannungsfrei
-schalten. Modbus-Schreibbefehle können den Betriebszustand der Anlage verändern.
-Register und Werte deshalb nur verwenden, wenn sie zur eigenen Geräte- und
-Firmwareversion passen.
+Disconnect the ventilation unit completely from power before working on its
+terminals. Modbus write commands can change the operating state of the unit.
+Use registers and values only after confirming that they match your appliance
+and firmware version.
 
-Die API, OTA-Schnittstelle, der Fallback-Hotspot und der Webserver verwenden
-Werte aus `secrets.yaml`. Das ESPHome-Gerät und Home Assistant sollten nicht
-ungeschützt aus dem Internet erreichbar sein.
+The API, OTA interface, fallback access point, and web server use values from
+`secrets.yaml`. Do not expose the ESPHome device or Home Assistant directly to
+the internet without appropriate protection.
 
-## Herkunft und Lizenz
+## Origin and license
 
-Die Standalone-Konfiguration wurde aus
+The standalone configuration is derived from
 [fonske/Brink-flair-modbus](https://github.com/fonske/Brink-flair-modbus)
-abgeleitet und für Brink Flair 400, M5Stack AtomS3 Lite sowie explizit
-ausgelöste und rückgelesene Steuerbefehle angepasst.
+and was adapted for the Brink Flair 400, M5Stack AtomS3 Lite, and explicitly
+triggered control commands with read-back verification.
 
-Dieses Projekt steht entsprechend dem Ursprungsprojekt unter der
-GNU General Public License Version 3 oder später. Siehe `LICENSE`.
+In accordance with the upstream project, this project is licensed under the
+GNU General Public License Version 3 or later. See `LICENSE`.
 
-Brink ist eine Marke des jeweiligen Rechteinhabers. Dieses Community-Projekt
-ist nicht mit dem Hersteller verbunden und wird nicht von ihm unterstützt.
+Brink is a trademark of its respective owner. This community project is not
+affiliated with or endorsed by the manufacturer.
