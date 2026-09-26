@@ -7,6 +7,9 @@ build/
 *.elf
 *.map
 
+# Local Home Assistant dashboard with real entity IDs/area names
+homeassistant-dashboard.local.yaml
+
 # Editor and operating-system files
 .DS_Store
 .idea/

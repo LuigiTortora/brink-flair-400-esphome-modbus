@@ -18,7 +18,7 @@ before flashing the ESP32.
 
 - Temperature, humidity, airflow, pressure, and fan-speed readings
 - Bypass, frost-protection, and filter status
-- Operating-mode and fan-stage selection
+- Operating-mode and fan-stage selection, including standby
 - Filter reset, bypass boost, and additional configurable values
 - Read-back verification for Modbus write commands
 - Home Assistant API, local web server, and OTA updates
@@ -43,6 +43,31 @@ esphome config brinkflair400.yaml
 ```
 
 `secrets.yaml` is excluded from Git by `.gitignore`.
+
+## Remote dashboard in Home Assistant
+
+The ESPHome device's built-in `web_server` is only reachable on the local
+network. When Home Assistant is accessed remotely (for example through
+Nabu Casa cloud), that local dashboard is not reachable, since remote access
+proxies the Home Assistant frontend itself, not other devices on the local
+network.
+
+`homeassistant-dashboard.yaml` provides a native Home Assistant Lovelace
+dashboard that mirrors the ESPHome dashboard's functionality using the
+entities already exposed through the Home Assistant API. It therefore works
+wherever Home Assistant itself is reachable, without exposing the ESP32 to
+the internet.
+
+To use it:
+
+1. Replace every `DEIN_BEREICH_` placeholder in the file with the actual
+   entity-ID prefix used by your Home Assistant instance. Look up the exact
+   entity IDs under Developer Tools -> States, filtering by "brink".
+2. In Home Assistant, go to Settings -> Dashboards -> Add Dashboard ->
+   "New dashboard from scratch".
+3. Open the new dashboard, click the pencil (edit) icon, then the three-dot
+   menu -> "Raw configuration editor".
+4. Replace the existing content with the file's content and save.
 
 ## Safety and security
 

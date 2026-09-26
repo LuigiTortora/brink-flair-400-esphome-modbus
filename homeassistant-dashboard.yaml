@@ -1,0 +1,148 @@
+# Home Assistant Lovelace Dashboard – Brink Flair 400
+#
+# Bildet die Funktionen des lokalen ESPHome-Web-Dashboards als natives HA-
+# Dashboard nach. Läuft über die normale Home-Assistant-API und ist damit
+# automatisch über Cloud-/Fernzugriff erreichbar, ohne das ESP32 zusätzlich
+# ins Internet zu exponieren.
+#
+# Einrichtung:
+#   1. Alle Vorkommen von "DEIN_BEREICH_" unten durch den tatsächlichen
+#      Bereichs-/Geräte-Präfix deiner Entities ersetzen (Editor: Suchen &
+#      Ersetzen). Die genauen Entity-IDs findest du in Home Assistant unter
+#      Entwicklerwerkzeuge -> Zustände (nach "brink" filtern).
+#   2. Home Assistant -> Einstellungen -> Dashboards -> Dashboard hinzufügen
+#      -> "Neues Dashboard von Grund auf neu erstellen".
+#   3. Geöffnetes Dashboard -> Stift (bearbeiten) -> Drei-Punkte-Menü oben
+#      rechts -> "Rohkonfigurationseditor".
+#   4. Kompletten Inhalt dieser Datei einfügen, vorhandenen Inhalt ersetzen.
+#   5. Speichern.
+#
+# Falls eine Karte im Editor rot/"Entität nicht gefunden" anzeigt: Entity-ID
+# in Entwicklerwerkzeuge -> Zustände nachschlagen und korrigieren.
+
+views:
+  - title: Lüftung
+    path: brink-flair-400
+    icon: mdi:air-filter
+    cards:
+      - type: entities
+        title: Steuerung
+        icon: mdi:fan-auto
+        entities:
+          - entity: select.DEIN_BEREICH_brinkflair400_brink_betriebsmodus
+            name: Betriebsmodus
+          - entity: sensor.DEIN_BEREICH_brink_flair_400_steuerung_brink_letzte_aktion
+            name: Letzte Aktion
+          - entity: select.DEIN_BEREICH_brinkflair400_bypass_mode
+            name: Bypass Modus
+          - entity: switch.DEIN_BEREICH_brinkflair400_bypass_boost
+            name: Bypass Boost aktiv
+          - entity: number.DEIN_BEREICH_brink_flair_400_bypass_boost_stufe
+            name: Bypass Boost Stufe
+          - entity: button.DEIN_BEREICH_brinkflair400_filter_reset
+            name: Filter zurücksetzen
+          - entity: button.DEIN_BEREICH_brinkflair400_restart
+            name: ESP neu starten
+      - type: entities
+        title: Status
+        icon: mdi:information-outline
+        entities:
+          - entity: sensor.DEIN_BEREICH_brinkflair400_status
+            name: Betriebsstatus (Rohwert)
+          - entity: sensor.DEIN_BEREICH_brinkflair400_bypass_status
+            name: Bypass
+          - entity: sensor.DEIN_BEREICH_brinkflair400_frost_status
+            name: Frostschutz
+          - entity: sensor.DEIN_BEREICH_brinkflair400_filter_status
+            name: Filter
+          - entity: >-
+              binary_sensor.DEIN_BEREICH_brink_flair_400_steuerung_brink_esp_status
+            name: ESP Verbindung
+          - entity: sensor.brink_flair_400_brink_wlan_signal
+            name: WLAN Signal
+          - entity: sensor.DEIN_BEREICH_brink_flair_400_brink_esp_laufzeit
+            name: ESP Laufzeit
+      - type: entities
+        title: Klima Außen & Druck
+        icon: mdi:weather-windy
+        entities:
+          - entity: sensor.DEIN_BEREICH_brink_flair_400_aussenluft_temperatur
+            name: Außenluft Temperatur
+          - entity: sensor.DEIN_BEREICH_brink_flair_400_zuluft_druck
+          - entity: sensor.DEIN_BEREICH_brink_flair_400_abluft_druck
+      - type: entities
+        title: Klima Innen (Zu-/Fortluft)
+        icon: mdi:home-thermometer-outline
+        entities:
+          - entity: sensor.DEIN_BEREICH_brink_flair_400_zuluft_temperatur
+          - entity: sensor.DEIN_BEREICH_brink_flair_400_zuluft_luftfeuchtigkeit
+          - entity: sensor.DEIN_BEREICH_brink_flair_400_zuluft_taupunkt
+          - entity: sensor.DEIN_BEREICH_brink_flair_400_fortluft_temperatur
+          - entity: sensor.DEIN_BEREICH_brink_flair_400_fortluft_luftfeuchtigkeit
+          - entity: sensor.DEIN_BEREICH_brink_flair_400_fortluft_taupunkt
+      - type: entities
+        title: Filter
+        icon: mdi:air-filter
+        entities:
+          - entity: sensor.DEIN_BEREICH_brink_flair_400_aktuelle_filterstunden
+          - entity: sensor.DEIN_BEREICH_brink_flair_400_aktuelle_filtertage
+          - entity: sensor.DEIN_BEREICH_brink_flair_400_filter_austauschen_in
+          - entity: sensor.DEIN_BEREICH_brink_flair_400_filternutzung_m3
+          - entity: number.DEIN_BEREICH_brink_flair_400_tage_vor_filterwarnung
+          - entity: sensor.DEIN_BEREICH_brink_flair_400_filter_reset_angeschaltet
+      - type: entities
+        title: Volumenstrom & Ventilatoren
+        icon: mdi:fan
+        entities:
+          - entity: sensor.DEIN_BEREICH_brink_flair_400_eingestelltes_zuluft_volumen
+          - entity: sensor.DEIN_BEREICH_brink_flair_400_aktuelles_zuluft_volumen
+          - entity: >-
+              sensor.DEIN_BEREICH_brink_flair_400_geschwindigkeit_zuluftventilator
+          - entity: sensor.DEIN_BEREICH_brink_flair_400_eingestelltes_abluft_volumen
+          - entity: sensor.DEIN_BEREICH_brink_flair_400_aktuelles_abluft_volumen
+          - entity: >-
+              sensor.DEIN_BEREICH_brink_flair_400_geschwindigkeit_abluftventilator
+          - type: divider
+          - entity: number.DEIN_BEREICH_brinkflair400_flow_0
+            name: Flow Stufe 0 (Urlaub)
+          - entity: number.DEIN_BEREICH_brinkflair400_flow_1
+            name: Flow Stufe 1 (Niedrig)
+          - entity: number.DEIN_BEREICH_brinkflair400_flow_2
+            name: Flow Stufe 2 (Normal)
+          - entity: number.DEIN_BEREICH_brinkflair400_flow_3
+            name: Flow Stufe 3 (Hoch)
+      - type: entities
+        title: Frostschutz
+        icon: mdi:snowflake
+        entities:
+          - entity: sensor.DEIN_BEREICH_brink_flair_400_frost_vorheizer_power
+          - entity: sensor.DEIN_BEREICH_brink_flair_400_frost_lufter_reduktion
+          - entity: number.DEIN_BEREICH_brink_flair_400_frostschutztemperatur
+          - entity: number.DEIN_BEREICH_brink_flair_400_mindest_einblastemperatur
+      - type: entities
+        title: Bypass Einstellungen
+        icon: mdi:valve
+        entities:
+          - entity: number.DEIN_BEREICH_brink_flair_400_bypass_wunschtemperatur
+          - entity: number.DEIN_BEREICH_brink_flair_400_bypass_aussentemperatur
+            name: Bypass Außentemperatur
+          - entity: number.DEIN_BEREICH_brink_flair_400_bypass_hysterese
+      - type: entities
+        title: Erweitert
+        icon: mdi:tune
+        entities:
+          - entity: number.DEIN_BEREICH_brink_flair_400_ungleichgewicht_zuluft
+          - entity: number.DEIN_BEREICH_brink_flair_400_ungleichgewicht_abluft
+          - entity: sensor.DEIN_BEREICH_brink_flair_400_geratetyp
+            name: Gerätetyp
+      - type: entities
+        title: Diagnose (Modbus Readback)
+        icon: mdi:bug-outline
+        show_header_toggle: false
+        entities:
+          - entity: >-
+              sensor.DEIN_BEREICH_brink_flair_400_brink_readback_7990_modbus_interface
+          - entity: >-
+              sensor.DEIN_BEREICH_brink_flair_400_brink_readback_8000_modbus_control
+          - entity: sensor.DEIN_BEREICH_brink_flair_400_brink_readback_8001_stufe
+          - entity: sensor.DEIN_BEREICH_brink_flair_400_brink_readback_8003_standby

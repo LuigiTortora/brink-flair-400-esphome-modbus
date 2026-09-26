@@ -962,6 +962,7 @@ select:
       - "Niedrig"
       - "Normal"
       - "Hoch"
+      - "Standby"
     update_interval: 2s
     lambda: |-
       if (isnan(id(brink_readback_7990).state) ||
@@ -975,6 +976,14 @@ select:
       const int control_mode = static_cast<int>(id(brink_readback_8000).state);
       const int preset = static_cast<int>(id(brink_readback_8001).state);
       const int standby = static_cast<int>(id(brink_readback_8003).state);
+
+      // Register 8003 readback: 0 = not in standby, 1 = in standby
+      // (Brink Modbus doc, external remote control registers 8000-8011).
+      // Standby can be entered independently of the interface/control/
+      // preset registers, so it is checked first.
+      if (standby == 1) {
+        return std::string("Standby");
+      }
 
       if (interface_mode == 1 && control_mode == 0 &&
           preset == 1 && standby == 0) {
@@ -997,19 +1006,6 @@ select:
       return {};
     set_action:
       - lambda: |-
-          int preset = 0;
-          const bool automatic = (x == "Automatik");
-
-          if (x == "Urlaub") {
-            preset = 0;
-          } else if (x == "Niedrig") {
-            preset = 1;
-          } else if (x == "Normal") {
-            preset = 2;
-          } else if (x == "Hoch") {
-            preset = 3;
-          }
-
           auto *controller = id(${name});
           auto write_register = [controller](uint16_t address, uint16_t value) {
             ESP_LOGI("brink.control", "FC06: Register %u = %u", address, value);
@@ -1025,9 +1021,36 @@ select:
           id(brink_letzte_aktion).publish_state("Sende: " + x);
           ESP_LOGI("brink.control", "Bewusste Auswahl: %s", x.c_str());
 
+          if (x == "Standby") {
+            // Register 8003 (Request Standby) is a standalone command:
+            // 1 = set appliance in standby. It does not touch the
+            // interface/control/preset registers, so their expected
+            // values stay at whatever is currently read back.
+            id(brink_expected_7990) = static_cast<int>(id(brink_readback_7990).state);
+            id(brink_expected_8000) = static_cast<int>(id(brink_readback_8000).state);
+            id(brink_expected_8001) = static_cast<int>(id(brink_readback_8001).state);
+            id(brink_expected_8003) = 1;
+
+            write_register(8003, 1);
+            return;
+          }
+
+          int preset = 0;
+          const bool automatic = (x == "Automatik");
+
+          if (x == "Urlaub") {
+            preset = 0;
+          } else if (x == "Niedrig") {
+            preset = 1;
+          } else if (x == "Normal") {
+            preset = 2;
+          } else if (x == "Hoch") {
+            preset = 3;
+          }
+
           if (automatic) {
             // Tested automatic/time-program sequence, exact order:
-            // 7990=1, 8001=1, 8003=0, 8000=0
+            // 7990=1, 8001=1, 8003=2 (explicit standby exit), 8000=0
             id(brink_expected_7990) = 1;
             id(brink_expected_8001) = 1;
             id(brink_expected_8003) = 0;
@@ -1035,11 +1058,11 @@ select:
 
             write_register(7990, 1);
             write_register(8001, 1);
-            write_register(8003, 0);
+            write_register(8003, 2);
             write_register(8000, 0);
           } else {
             // Tested manual sequence, exact order:
-            // 7990=2, 8000=1, 8001=preset, 8003=0
+            // 7990=2, 8000=1, 8001=preset, 8003=2 (explicit standby exit)
             id(brink_expected_7990) = 2;
             id(brink_expected_8000) = 1;
             id(brink_expected_8001) = preset;
@@ -1048,7 +1071,7 @@ select:
             write_register(7990, 2);
             write_register(8000, 1);
             write_register(8001, preset);
-            write_register(8003, 0);
+            write_register(8003, 2);
           }
 
 switch:
