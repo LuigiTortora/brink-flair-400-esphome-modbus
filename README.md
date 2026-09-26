@@ -17,33 +17,34 @@ before flashing the ESP32.
 ## Architecture
 
 <table>
-  <tr>
-    <td align="center" width="140">
-      <img src="https://supplier.brinkclimatesystems.nl/getmetafile/4da0b0d6-1da7-43b0-ba34-a28ed9093108/Flair-325-Brink-Climate-Systems?maxsidesize=500" width="110" alt="Brink Flair 400 UWA2-B"><br>
-      <sub><b>Brink Flair 400</b><br>UWA2-B</sub>
-    </td>
-    <td align="center" width="110">
-      <img src="https://img.shields.io/badge/Modbus%20RTU-RS485%20%C2%B7%2019200%20%C2%B7%208E1%20%C2%B7%20Addr%2020-2563eb?style=flat-square&labelColor=1e293b" alt="Modbus RTU, RS485, 19200 baud, 8E1, address 20"><br>➜
-    </td>
-    <td align="center" width="140">
-      <img src="https://shop.m5stack.com/cdn/shop/files/1_0bd564e9-7d66-4d93-a990-3a27b54e8230_1200x1200.webp?v=1691044592" width="90" alt="M5Stack Atomic RS485 Base"><br>
-      <sub><b>Atomic RS485 Base</b></sub>
-    </td>
-    <td align="center" width="90">
-      <img src="https://img.shields.io/badge/UART-GPIO5%20%2F%20GPIO6-64748b?style=flat-square&labelColor=1e293b" alt="UART, GPIO5 / GPIO6"><br>➜
-    </td>
-    <td align="center" width="140">
-      <img src="https://shop.m5stack.com/cdn/shop/products/1_a974a380-b3f8-4d2a-bce0-2f1ff172eb4c_1200x1200.webp?v=1675390141" width="90" alt="M5Stack AtomS3 Lite"><br>
-      <sub><b>AtomS3 Lite</b><br>ESP32-S3 + ESPHome</sub>
-    </td>
-    <td align="center" width="80">
-      <img src="https://img.shields.io/badge/Wi--Fi-ESPHome%20API-16a34a?style=flat-square&labelColor=1e293b" alt="Wi-Fi, ESPHome API"><br>➜
-    </td>
-    <td align="center" width="130">
-      <img src="https://raw.githubusercontent.com/home-assistant/brands/master/core_integrations/_homeassistant/icon.png" width="80" alt="Home Assistant"><br>
-      <sub><b>Home Assistant</b></sub>
-    </td>
-  </tr>
+  <tr><td align="center">
+    <img src="https://supplier.brinkclimatesystems.nl/getmetafile/4da0b0d6-1da7-43b0-ba34-a28ed9093108/Flair-325-Brink-Climate-Systems?maxsidesize=500" width="130" alt="Brink Flair 400 UWA2-B"><br>
+    <sub><b>Brink Flair 400</b><br>UWA2-B</sub>
+  </td></tr>
+  <tr><td align="center">
+    ⬇<br>
+    <img src="https://img.shields.io/badge/Modbus%20RTU-RS485%20%C2%B7%2019200%20%C2%B7%208E1%20%C2%B7%20Addr%2020-2563eb?style=for-the-badge&labelColor=1e293b" alt="Modbus RTU, RS485, 19200 baud, 8E1, address 20">
+  </td></tr>
+  <tr><td align="center">
+    <img src="https://shop.m5stack.com/cdn/shop/files/1_0bd564e9-7d66-4d93-a990-3a27b54e8230_1200x1200.webp?v=1691044592" width="110" alt="M5Stack Atomic RS485 Base"><br>
+    <sub><b>Atomic RS485 Base</b></sub>
+  </td></tr>
+  <tr><td align="center">
+    ⬇<br>
+    <img src="https://img.shields.io/badge/UART-GPIO5%20%2F%20GPIO6-64748b?style=for-the-badge&labelColor=1e293b" alt="UART, GPIO5 / GPIO6">
+  </td></tr>
+  <tr><td align="center">
+    <img src="https://shop.m5stack.com/cdn/shop/products/1_a974a380-b3f8-4d2a-bce0-2f1ff172eb4c_1200x1200.webp?v=1675390141" width="110" alt="M5Stack AtomS3 Lite"><br>
+    <sub><b>AtomS3 Lite</b><br>ESP32-S3 + ESPHome</sub>
+  </td></tr>
+  <tr><td align="center">
+    ⬇<br>
+    <img src="https://img.shields.io/badge/Wi--Fi-ESPHome%20API-16a34a?style=for-the-badge&labelColor=1e293b" alt="Wi-Fi, ESPHome API">
+  </td></tr>
+  <tr><td align="center">
+    <img src="https://raw.githubusercontent.com/home-assistant/brands/master/core_integrations/_homeassistant/icon.png" width="100" alt="Home Assistant"><br>
+    <sub><b>Home Assistant</b></sub>
+  </td></tr>
 </table>
 
 <sub>Product images © their respective manufacturers (Brink Climate Systems,
