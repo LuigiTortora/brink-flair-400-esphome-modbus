@@ -14,6 +14,26 @@ Other Flair models or hardware variants may use different registers,
 addresses, or GPIO assignments. Verify these settings against your own unit
 before flashing the ESP32.
 
+## Architecture
+
+```mermaid
+graph TD
+    A["Brink Flair 400 UWA2-B<br/>ventilation unit"] -->|"Modbus RTU (RS485)<br/>19200 baud, even parity, 1 stop bit<br/>slave address 20"| B["M5Stack Atomic RS485 Base<br/>RS485 transceiver"]
+    B -->|"UART, GPIO5 / GPIO6"| C["M5Stack AtomS3 Lite<br/>ESP32-S3 running ESPHome"]
+    C -->|"Wi-Fi"| D["Home Assistant<br/>local network"]
+    D -->|"local network, port 80"| E["ESPHome web dashboard<br/>LAN only"]
+    D -->|"cloud / remote access"| F["Lovelace dashboard<br/>homeassistant-dashboard.yaml<br/>reachable from anywhere"]
+
+    style E fill:#f8d7da,stroke:#c0392b,color:#000
+    style F fill:#d4edda,stroke:#27ae60,color:#000
+```
+
+The ESP32 talks to the ventilation unit over Modbus RTU and to Home Assistant
+over Wi-Fi/the native API. The ESPHome device's own web dashboard (red) stays
+local-network-only; the Lovelace dashboard (green, see
+[Remote dashboard in Home Assistant](#remote-dashboard-in-home-assistant))
+rides along with Home Assistant's own remote/cloud access instead.
+
 ## Features
 
 - Temperature, humidity, airflow, pressure, and fan-speed readings
