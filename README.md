@@ -16,23 +16,41 @@ before flashing the ESP32.
 
 ## Architecture
 
-```mermaid
-graph TD
-    A["Brink Flair 400 UWA2-B<br/>ventilation unit"] -->|"Modbus RTU (RS485)<br/>19200 baud, even parity, 1 stop bit<br/>slave address 20"| B["M5Stack Atomic RS485 Base<br/>RS485 transceiver"]
-    B -->|"UART, GPIO5 / GPIO6"| C["M5Stack AtomS3 Lite<br/>ESP32-S3 running ESPHome"]
-    C -->|"Wi-Fi"| D["Home Assistant<br/>local network"]
-    D -->|"local network, port 80"| E["ESPHome web dashboard<br/>LAN only"]
-    D -->|"cloud / remote access"| F["Lovelace dashboard<br/>homeassistant-dashboard.yaml<br/>reachable from anywhere"]
+<table>
+  <tr>
+    <td align="center" width="130">
+      <img src="https://supplier.brinkclimatesystems.nl/getmetafile/4da0b0d6-1da7-43b0-ba34-a28ed9093108/Flair-325-Brink-Climate-Systems?maxsidesize=500" width="110" alt="Brink Flair 400 UWA2-B"><br>
+      <sub><b>Brink Flair 400</b><br>UWA2-B</sub>
+    </td>
+    <td align="center" width="90"><sub>Modbus RTU<br>(RS485)<br>19200, 8E1<br>address 20</sub><br>→</td>
+    <td align="center" width="130">
+      <img src="https://shop.m5stack.com/cdn/shop/files/1_0bd564e9-7d66-4d93-a990-3a27b54e8230_1200x1200.webp?v=1691044592" width="90" alt="M5Stack Atomic RS485 Base"><br>
+      <sub><b>Atomic RS485 Base</b></sub>
+    </td>
+    <td align="center" width="80"><sub>UART<br>GPIO5 / GPIO6</sub><br>→</td>
+    <td align="center" width="130">
+      <img src="https://shop.m5stack.com/cdn/shop/products/1_a974a380-b3f8-4d2a-bce0-2f1ff172eb4c_1200x1200.webp?v=1675390141" width="90" alt="M5Stack AtomS3 Lite"><br>
+      <sub><b>AtomS3 Lite</b><br>ESP32-S3 + ESPHome</sub>
+    </td>
+    <td align="center" width="70"><sub>Wi-Fi</sub><br>→</td>
+    <td align="center" width="130">
+      <img src="https://raw.githubusercontent.com/home-assistant/brands/master/core_integrations/_homeassistant/icon.png" width="80" alt="Home Assistant"><br>
+      <sub><b>Home Assistant</b></sub>
+    </td>
+  </tr>
+</table>
 
-    style E fill:#f8d7da,stroke:#c0392b,color:#000
-    style F fill:#d4edda,stroke:#27ae60,color:#000
-```
+<sub>Product images © their respective manufacturers (Brink Climate Systems,
+M5Stack, Home Assistant), shown here for identification purposes only. This
+project is not affiliated with or endorsed by either manufacturer.</sub>
 
-The ESP32 talks to the ventilation unit over Modbus RTU and to Home Assistant
-over Wi-Fi/the native API. The ESPHome device's own web dashboard (red) stays
-local-network-only; the Lovelace dashboard (green, see
-[Remote dashboard in Home Assistant](#remote-dashboard-in-home-assistant))
-rides along with Home Assistant's own remote/cloud access instead.
+From Home Assistant, the setup is reachable in two ways:
+
+- **Local network only**: the ESPHome device's own `web_server` dashboard
+  (see [Safety and security](#safety-and-security)).
+- **From anywhere, including through Home Assistant's cloud/remote access**:
+  the Lovelace dashboard described below, since it rides along with Home
+  Assistant itself instead of exposing the ESP32 separately.
 
 ## Features
 
